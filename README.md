@@ -54,7 +54,20 @@ Cette erreur veut dire que GitHub n'a pas trouvé les secrets Docker Hub.
 
 Corrigez comme suit:
 1. Dans Docker Hub, créez un **Access Token** (`Account settings > Personal access tokens`).
-2. Dans GitHub: `Settings > Secrets and variables > Actions > New repository secret`.
+new
+Create access token
+formullaire
+access token description: initiation
+expiration none
+access permissions :public
+generate
+=>
+To use the access token from your Docker CLI client:
+*. Run
+docker login -u lalainaraky
+**. At the password prompt, enter the personal access token.
+dckr...
+2. Dans GitHub du repo dans security: `Settings > Secrets and variables > Actions > New repository secret`.
 3. Ajoutez exactement:
    - `DOCKERHUB_USERNAME` = votre username Docker Hub (ex: `lalainaraky`)
    - `DOCKERHUB_TOKEN` = le token Docker Hub
