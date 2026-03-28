@@ -49,6 +49,19 @@ Ensuite:
 1. poussez sur `main`/`master`, ou
 2. lancez manuellement via **Actions > Docker Frontend/Backend > Run workflow**.
 
+### Erreur GitHub Actions: `Username and password required`
+Cette erreur veut dire que GitHub n'a pas trouvé les secrets Docker Hub.
+
+Corrigez comme suit:
+1. Dans Docker Hub, créez un **Access Token** (`Account settings > Personal access tokens`).
+2. Dans GitHub: `Settings > Secrets and variables > Actions > New repository secret`.
+3. Ajoutez exactement:
+   - `DOCKERHUB_USERNAME` = votre username Docker Hub (ex: `lalainaraky`)
+   - `DOCKERHUB_TOKEN` = le token Docker Hub
+4. Re-lancez le workflow (**Actions > Docker Frontend/Backend > Re-run jobs**).
+
+> Les workflows sont maintenant tolérants: sans secrets ils font un **build uniquement** (pas de push), donc le pipeline ne casse plus.
+
 Après le premier run, vous verrez l'indicateur (badge vert/rouge) du build Docker.
 
 ## Arborescence recommandée (3 repositories GitHub)
