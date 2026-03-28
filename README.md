@@ -60,6 +60,16 @@ Corrigez comme suit:
 3. Ajoutez exactement:
    - `DOCKERHUB_USERNAME` = votre username Docker Hub (ex: `lalainaraky`)
    - `DOCKERHUB_TOKEN` = le token Docker Hub
+
+    Name: DOCKERHUB_USERNAME
+    Secret: ton username Docker Hub (ex: lalainaraky)
+
+    Name: DOCKERHUB_TOKEN
+    Secret: le nouveau PAT Docker (Read & Write)
+
+Ces noms doivent être exacts, car le workflow lit précisément ces clés. 
+
+
 4. Re-lancez le workflow (**Actions > Docker Frontend/Backend > Re-run jobs**).
 
 > Les workflows poussent maintenant **obligatoirement** les images sur Docker Hub. Si les secrets manquent, le job échoue avec un message explicite.
@@ -110,6 +120,90 @@ docker push <dockerhub_user>/gasy-frontend:latest
 docker build -t <dockerhub_user>/gasy-backend:latest -f backend/Dockerfile backend
 docker push <dockerhub_user>/gasy-backend:latest
 ```
+
+
+## ✅ Prochaine étape quand les images sont visibles sur Docker Hub
+
+Si vous voyez `lalainaraky/gasy-frontend` et `lalainaraky/gasy-backend` avec les tags (`latest`, `main`, hash), la suite est:
+
+1. Préparer le fichier d'environnement VPS:
+```bash
+cp .env.vps.example .env.vps
+```
+2. Modifier `.env.vps` avec vos vraies valeurs:
+   - `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:latest`
+   - `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:latest`
+   - `POSTGRES_PASSWORD` fort
+   - `DJANGO_SECRET_KEY` fort
+   - `DJANGO_ALLOWED_HOSTS` avec votre domaine ou IP VPS (pas `*` en production)
+
+3. Lancer les conteneurs sur le VPS:
+```bash
+docker compose --env-file .env.vps -f docker-compose.vps.yml up -d
+```
+
+4. Vérifier que tout tourne:
+```bash
+docker compose --env-file .env.vps -f docker-compose.vps.yml ps
+docker compose --env-file .env.vps -f docker-compose.vps.yml logs -f backend
+docker compose --env-file .env.vps -f docker-compose.vps.yml logs -f frontend
+```
+
+5. Initialiser/valider l'application:
+   - tester l'URL publique du frontend
+   - tester l'API via `http://<vps>/api/...`
+   - créer un admin Django si nécessaire:
+```bash
+docker compose --env-file .env.vps -f docker-compose.vps.yml exec backend python manage.py createsuperuser
+```
+
+6. (Recommandé) Mettre un reverse proxy HTTPS (Nginx + Certbot) si vous utilisez un nom de domaine.
+
+
+## 🧪 Tester en local avec les images Docker Hub (sur votre ordinateur)
+
+Si vous avez déjà Docker Desktop / Docker Engine en local, vous pouvez tester exactement les images publiées sans VPS.
+
+1. Créer un fichier d'environnement local:
+```bash
+cp .env.vps.example .env.local
+```
+
+2. Éditer `.env.local`:
+- `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:latest`
+- `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:latest`
+- `POSTGRES_PASSWORD=mot_de_passe_local`
+- `DJANGO_SECRET_KEY=cle_locale_longue`
+- `DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1`
+
+3. Récupérer explicitement les dernières images:
+```bash
+docker pull docker.io/lalainaraky/gasy-frontend:latest
+docker pull docker.io/lalainaraky/gasy-backend:latest
+```
+
+4. Démarrer la stack en local:
+```bash
+docker compose --env-file .env.local -f docker-compose.vps.yml up -d
+```
+
+5. Vérifier le démarrage:
+```bash
+docker compose --env-file .env.local -f docker-compose.vps.yml ps
+docker compose --env-file .env.local -f docker-compose.vps.yml logs -f backend
+docker compose --env-file .env.local -f docker-compose.vps.yml logs -f frontend
+```
+
+6. Tester dans le navigateur:
+- Frontend: `http://localhost`
+- API (via proxy frontend): `http://localhost/api/`
+
+7. Arrêter les conteneurs après test:
+```bash
+docker compose --env-file .env.local -f docker-compose.vps.yml down
+```
+
+> Si le port `80` est déjà utilisé sur votre machine, libérez-le ou adaptez temporairement le mapping `ports` du service `frontend`.
 
 ## 2) Déploiement sur le VPS
 
