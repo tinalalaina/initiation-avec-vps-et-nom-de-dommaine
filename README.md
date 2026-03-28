@@ -1,5 +1,8 @@
 # utilisateur-avec-react-vite-et-django-et-postgresql-otp
 
+![Docker Frontend](https://github.com/tinalalaina/initiation-avec-vps-et-nom-de-domaine/actions/workflows/docker-frontend.yml/badge.svg)
+![Docker Backend](https://github.com/tinalalaina/initiation-avec-vps-et-nom-de-domaine/actions/workflows/docker-backend.yml/badge.svg)
+
 ## Local (sans Docker)
 ```bash
 git clone <repo>
@@ -26,6 +29,58 @@ python manage.py runserver
 - un seul `docker-compose.vps.yml` sur le VPS pour lancer les 3 services
 
 > Le frontend et le backend peuvent être dans **2 repositories GitHub différents**. Sur le VPS, on utilise uniquement les images Docker Hub.
+
+
+
+## GitHub Actions (pour voir l'indicateur Docker)
+
+Si l'onglet **Actions** affiche seulement "Get started", c'est normal: il faut d'abord un fichier workflow dans `.github/workflows/`.
+
+Workflows ajoutés:
+- `.github/workflows/docker-frontend.yml`
+- `.github/workflows/docker-backend.yml`
+
+### Secrets à configurer dans GitHub
+Dans `Settings > Secrets and variables > Actions`, ajoutez:
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN` (token Docker Hub, pas le mot de passe)
+
+Ensuite:
+1. poussez sur `main`/`master`, ou
+2. lancez manuellement via **Actions > Docker Frontend/Backend > Run workflow**.
+
+Après le premier run, vous verrez l'indicateur (badge vert/rouge) du build Docker.
+
+## Arborescence recommandée (3 repositories GitHub)
+
+Si vous avez **3 repositories** (`frontend`, `backend`, `infra-vps`), utilisez cette structure:
+
+```text
+# Repo 1: gasy-frontend
+gasy-frontend/
+├── src/
+├── public/
+├── package.json
+├── Dockerfile
+├── nginx.conf
+└── .dockerignore
+
+# Repo 2: gasy-backend
+gasy-backend/
+├── agriculture/
+├── users/
+├── manage.py
+├── requirements.txt
+├── Dockerfile
+└── .dockerignore
+
+# Repo 3: gasy-infra-vps
+gasy-infra-vps/
+├── docker-compose.vps.yml
+└── .env.vps
+```
+
+> Sur le VPS, vous clonez seulement `gasy-infra-vps`, puis `docker compose` tire les images Docker Hub `frontend` et `backend`.
 
 ## 1) Build et push des images vers Docker Hub
 
