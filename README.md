@@ -109,30 +109,34 @@ gasy-infra-vps/
 
 ## 1) Build et push des images vers Docker Hub
 
+> Recommandé: utiliser un tag immutable basé sur le commit (`sha-...`) au lieu de `latest`.
+
 ### Frontend (dans le repo frontend)
 ```bash
-docker build -t <dockerhub_user>/gasy-frontend:latest -f frontend/Dockerfile frontend
-docker push <dockerhub_user>/gasy-frontend:latest
+IMAGE_TAG=sha-$(git rev-parse --short HEAD)
+docker build -t <dockerhub_user>/gasy-frontend:${IMAGE_TAG} -f frontend/Dockerfile frontend
+docker push <dockerhub_user>/gasy-frontend:${IMAGE_TAG}
 ```
 
 ### Backend (dans le repo backend)
 ```bash
-docker build -t <dockerhub_user>/gasy-backend:latest -f backend/Dockerfile backend
-docker push <dockerhub_user>/gasy-backend:latest
+IMAGE_TAG=sha-$(git rev-parse --short HEAD)
+docker build -t <dockerhub_user>/gasy-backend:${IMAGE_TAG} -f backend/Dockerfile backend
+docker push <dockerhub_user>/gasy-backend:${IMAGE_TAG}
 ```
 
 
 ## ✅ Prochaine étape quand les images sont visibles sur Docker Hub
 
-Si vous voyez `lalainaraky/gasy-frontend` et `lalainaraky/gasy-backend` avec les tags (`latest`, `main`, hash), la suite est:
+Si vous voyez `lalainaraky/gasy-frontend` et `lalainaraky/gasy-backend` avec un tag versionné (ex: `sha-c0f0f18`), la suite est:
 
 1. Préparer le fichier d'environnement VPS:
 ```bash
 cp .env.vps.example .env.vps
 ```
 2. Modifier `.env.vps` avec vos vraies valeurs:
-   - `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:latest`
-   - `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:latest`
+   - `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:sha-c0f0f18`
+   - `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:sha-c0f0f18`
    - `POSTGRES_PASSWORD` fort
    - `DJANGO_SECRET_KEY` fort
    - `DJANGO_ALLOWED_HOSTS` avec votre domaine ou IP VPS (pas `*` en production)
@@ -171,8 +175,8 @@ cp .env.vps.example .env.local
 ```
 
 2. Éditer `.env.local`:
-- `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:latest`
-- `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:latest`
+- `FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:sha-c0f0f18`
+- `BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:sha-c0f0f18`
 - `POSTGRES_PASSWORD=mot_de_passe_local`
 - `DJANGO_SECRET_KEY=cle_locale_longue`
 - `DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1`
@@ -203,8 +207,8 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
 
 3. Récupérer explicitement les dernières images:
 ```bash
-docker pull docker.io/lalainaraky/gasy-frontend:latest
-docker pull docker.io/lalainaraky/gasy-backend:latest
+docker pull docker.io/lalainaraky/gasy-frontend:sha-c0f0f18
+docker pull docker.io/lalainaraky/gasy-backend:sha-c0f0f18
 ```
 Ça met les images sur ton PC (comme un “download”).
 Tu verras Status: Downloaded newer image ou Image is up to date.
