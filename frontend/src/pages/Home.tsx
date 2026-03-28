@@ -5,7 +5,7 @@ const Home = () => {
     <div className="home">
       <section className="hero">
         <div>
-          <p className="eyebrow">Pour les agriculteurs et leurs partenaires</p>
+          <p className="eyebrow"> TESTE DOCKER IMAGE AVEC NUM COMMIT PAS LATESTPour les agriculteurs et leurs partenaires</p>
           <h1>Une plateforme simple pour piloter vos projets agricoles.</h1>
           <p>
             AgroConnect vous aide à suivre vos demandes, coordonner les prestataires et garder un œil clair sur vos
