@@ -12,6 +12,7 @@ import Register from './pages/Register'
 import Settings from './pages/Settings'
 import './App.css'
 
+
 function App() {
   return (
     <Layout>
