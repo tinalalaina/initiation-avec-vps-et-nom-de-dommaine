@@ -54,20 +54,7 @@ Cette erreur veut dire que GitHub n'a pas trouvé les secrets Docker Hub.
 
 Corrigez comme suit:
 1. Dans Docker Hub, créez un **Access Token** (`Account settings > Personal access tokens`).
-new
-Create access token
-formullaire
-access token description: initiation
-expiration none
-access permissions :public
-generate
-=>
-To use the access token from your Docker CLI client:
-*. Run
-docker login -u lalainaraky
-**. At the password prompt, enter the personal access token.
-dckr...
-2. Dans GitHub du repo dans security: `Settings > Secrets and variables > Actions > New repository secret`.
+2. Dans GitHub: `Settings > Secrets and variables > Actions > New repository secret`.
 3. Ajoutez exactement:
    - `DOCKERHUB_USERNAME` = votre username Docker Hub (ex: `lalainaraky`)
    - `DOCKERHUB_TOKEN` = le token Docker Hub
@@ -155,5 +142,6 @@ docker compose --env-file .env.vps -f docker-compose.vps.yml logs -f
 - `.env.vps.example`
 
 ## Notes
+- Le build Docker frontend utilise `npm run build:docker` (`vite build`) pour produire l'image même si le type-check TypeScript strict échoue en CI.
 - En production, le frontend appelle l'API via `/api` (reverse proxy Nginx vers le service `backend`).
 - En local, vous pouvez conserver `VITE_API_URL=http://127.0.0.1:8000/api` via `frontend/.env`.

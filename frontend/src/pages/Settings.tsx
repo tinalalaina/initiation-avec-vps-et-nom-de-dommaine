@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import Card from '../components/Card'
 import FormField from '../components/FormField'
 import Skeleton from '../components/Skeleton'

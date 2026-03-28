@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import Card from '../components/Card'
 import FormField from '../components/FormField'

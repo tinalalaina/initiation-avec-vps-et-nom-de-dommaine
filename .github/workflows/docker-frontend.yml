@@ -58,7 +58,6 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: ${{ steps.cfg.outputs.push_enabled == 'true' }}
+          load: ${{ steps.cfg.outputs.push_enabled != 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-
