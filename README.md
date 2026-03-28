@@ -45,6 +45,8 @@ Dans `Settings > Secrets and variables > Actions`, ajoutez:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN` (token Docker Hub, pas le mot de passe)
 
+> `DOCKERHUB_USERNAME` doit être exactement votre namespace Docker Hub (ex: `tinalalaina`).
+
 Ensuite:
 1. poussez sur `main`/`master`, ou
 2. lancez manuellement via **Actions > Docker Frontend/Backend > Run workflow**.
@@ -60,7 +62,7 @@ Corrigez comme suit:
    - `DOCKERHUB_TOKEN` = le token Docker Hub
 4. Re-lancez le workflow (**Actions > Docker Frontend/Backend > Re-run jobs**).
 
-> Les workflows sont maintenant tolérants: sans secrets ils font un **build uniquement** (pas de push), donc le pipeline ne casse plus.
+> Les workflows poussent maintenant **obligatoirement** les images sur Docker Hub. Si les secrets manquent, le job échoue avec un message explicite.
 
 Après le premier run, vous verrez l'indicateur (badge vert/rouge) du build Docker.
 
