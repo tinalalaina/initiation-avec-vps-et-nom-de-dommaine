@@ -137,6 +137,7 @@ cp .env.vps.example .env.vps
    - `DJANGO_SECRET_KEY` fort
    - `DJANGO_ALLOWED_HOSTS` avec votre domaine ou IP VPS (pas `*` en production)
 
+
 3. Lancer les conteneurs sur le VPS:
 ```bash
 docker compose --env-file .env.vps -f docker-compose.vps.yml up -d
@@ -176,17 +177,50 @@ cp .env.vps.example .env.local
 - `DJANGO_SECRET_KEY=cle_locale_longue`
 - `DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1`
 
+
+ici on a: sur .env.local
+# Docker Hub images (repo can be in separate GitHub repositories)
+# FRONTEND_IMAGE=docker.io/<dockerhub_user>/gasy-frontend:latest
+# BACKEND_IMAGE=docker.io/<dockerhub_user>/gasy-backend:latest
+
+FRONTEND_IMAGE=docker.io/lalainaraky/gasy-frontend:latest
+BACKEND_IMAGE=docker.io/lalainaraky/gasy-backend:latest
+
+POSTGRES_DB=agriculture
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=lalaina14
+
+DJANGO_SECRET_KEY=M718OXvpAVK0pakkQsR48aofE3w39ozt_RqMGf1Zj5qq_UXDU3YPQhPUyoW7EfQY52LOrHNUAXQzHs7FoLmWCg
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Tu peux générer DJANGO_SECRET_KEY facilement avec une de ces commandes :
+# python -c "import secrets; print(secrets.token_urlsafe(64))"
+# source venv/bin/activate si linux , puis cette commande en haut
+
+
+
+
 3. Récupérer explicitement les dernières images:
 ```bash
 docker pull docker.io/lalainaraky/gasy-frontend:latest
 docker pull docker.io/lalainaraky/gasy-backend:latest
 ```
+Ça met les images sur ton PC (comme un “download”).
+Tu verras Status: Downloaded newer image ou Image is up to date.
 
 4. Démarrer la stack en local:
 ```bash
 docker compose --env-file .env.local -f docker-compose.vps.yml up -d
 ```
+Après ça, tu testes dans le navigateur :
 
+    Frontend : http://localhost
+
+    API : http://localhost/api/
+    (c’est la procédure de test local documentée dans le README).
+
+---> donc ca marche maintenant en local sans utiliser un npm run dev , ni python manage.py runserver
 5. Vérifier le démarrage:
 ```bash
 docker compose --env-file .env.local -f docker-compose.vps.yml ps
@@ -241,3 +275,4 @@ docker compose --env-file .env.vps -f docker-compose.vps.yml logs -f
 - Le build Docker frontend utilise `npm run build:docker` (`vite build`) pour produire l'image même si le type-check TypeScript strict échoue en CI.
 - En production, le frontend appelle l'API via `/api` (reverse proxy Nginx vers le service `backend`).
 - En local, vous pouvez conserver `VITE_API_URL=http://127.0.0.1:8000/api` via `frontend/.env`.
+
