@@ -7,7 +7,7 @@ const Home = () => {
         <div>
           <p className="eyebrow"> TESTE DOCKER IMAGE AVEC NUM COMMIT PAS LATESTPour les agriculteurs et leurs partenaires</p>
           <h1>Une plateforme simple pour piloter vos projets agricoles.</h1>
-          <h1>teste autodeployement</h1>
+          <h1>teste2222222 autodeployement</h1>
           <p>
             AgroConnect vous aide à suivre vos demandes, coordonner les prestataires et garder un œil clair sur vos
             opérations. L&apos;interface reste simple et accessible pour tous les acteurs du terrain.
