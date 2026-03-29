@@ -3,21 +3,28 @@ name: Build & Deploy Frontend
 on:
   push:
     branches: ["main"]
-    paths:
-      - "frontend/**"
-      - ".github/workflows/deploy-frontend.yml"
   workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      IMAGE_NAME: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gasy-frontend
+      SHORT_SHA: ${{ github.sha }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set short SHA
-        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Set short sha
+        run: echo "SHORT_SHA7=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -35,8 +42,8 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gasy-frontend:latest
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gasy-frontend:sha-${{ env.SHORT_SHA }}
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:sha-${{ env.SHORT_SHA7 }}
 
       - name: Deploy frontend on VPS
         uses: appleboy/ssh-action@v1.2.0
@@ -45,13 +52,13 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
+          script_stop: true
           script: |
             set -e
             cd ${{ secrets.VPS_PATH }}
-
-            # Assure un .env.vps propre (une seule ligne FRONTEND_IMAGE)
+            # garder latest pour éviter mismatch de tag
             sed -i '/^FRONTEND_IMAGE=/d' .env.vps
-            printf "FRONTEND_IMAGE=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gasy-frontend:latest\n" | cat - .env.vps > .env.tmp && mv .env.tmp .env.vps
+            echo "FRONTEND_IMAGE=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gasy-frontend:latest" >> .env.vps
 
             docker compose --env-file .env.vps -f docker-compose.vps.yml pull frontend
             docker compose --env-file .env.vps -f docker-compose.vps.yml up -d frontend
